@@ -1,0 +1,96 @@
+<div class="container mt-4">
+  <h1 class="mb-4">Todas las Reservas</h1>
+
+  <h3 class="mt-5">Reservas de Habitaciones</h3>
+  @if (allRoomReservations$ | async; as reservations) {
+    @if (reservations.length > 0) {
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Habitación</th>
+              <th>Usuario</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (res of reservations; track res.id) {
+              <tr>
+                <td>{{ res.roomName }}</td>
+                <td>{{ res.userEmail }}</td>
+                <td>{{ res.checkInDate | firestoreDate | date: 'longDate' }}</td>
+                <td>{{ res.checkOutDate | firestoreDate | date: 'longDate' }}</td>
+                <td>${{ res.totalPrice }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="alert alert-info">No hay reservas de habitaciones.</p>
+    }
+  }
+
+  <h3 class="mt-5">Reservas de Eventos</h3>
+  @if (allEventReservations$ | async; as reservations) {
+    @if (reservations.length > 0) {
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Evento</th>
+              <th>Usuario</th>
+              <th>Entradas</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (res of reservations; track res.id) {
+              <tr>
+                <td>{{ res.eventName }}</td>
+                <td>{{ res.userEmail }}</td>
+                <td>{{ res.tickets }}</td>
+                <td>${{ res.totalPrice }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="alert alert-info">No hay reservas de eventos.</p>
+    }
+  }
+
+
+  <h3 class="mt-5">Alquileres pendientes de salones</h3>
+  @if (allHallReservations$ | async; as reservations) {
+    @if (reservations.length > 0) {
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Evento</th>
+              <th>Usuario</th>
+              <th>Id</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (res of reservations; track res.id) {
+              <tr>
+                <td>{{ res.hallName }}</td>
+                <td>{{ res.userEmail }}</td>
+                <td>{{ res.hallId }}</td>
+                <td>{{ res.eventDate| firestoreDate | date: 'longDate' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="alert alert-info">No hay reservas de eventos.</p>
+    }
+  }
+</div>

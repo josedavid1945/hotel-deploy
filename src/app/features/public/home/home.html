@@ -1,0 +1,159 @@
+<div class="container mt-4">
+    <div class="container mt-4">
+        <div class="row mb-5  ">
+
+            <div class="card h-100  d-flex  align-items-center " style="gap: 20px ;">
+                <h1 class="card-title  "><strong>
+                        ¿QUIENES SOMOS?
+                    </strong></h1>
+                <h2 class="">Un Oasis de Tranquilidad y Elegancia</h2>
+                <p class="lead  ">
+                    Bienvenido al Hotel ULEAM, donde la hospitalidad manabita se encuentra con el diseño contemporáneo.
+                    Ubicado estratégicamente en Manta, nuestro hotel es el punto de partida ideal para explorar las
+                    playas doradas y la vibrante cultura local. Ofrecemos instalaciones de primera clase, un servicio
+                    excepcional y un ambiente diseñado para tu máximo descanso y confort. Ya sea por negocios o placer,
+                    tu satisfacción es nuestra prioridad.
+                </p>
+            </div>
+
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4 border-top pt-4">
+        <h1>Salones</h1>
+    </div>
+
+    @if (halls$ | async; as halls) {
+        @if (halls.length > 0) {
+            <div class="row mb-5 align-items-center">
+                <div class="col-lg-7">
+                    <div id="hallsCarousel" class="carousel slide shadow rounded overflow-hidden" data-bs-interval="5000" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            @for (hall of halls; track hall.id) {
+                                <div class="carousel-item" [class.active]="$first">
+                                    <img [src]="hall.imageUrl || 'https://via.placeholder.com/800x400'" class="d-block w-100" alt="{{ hall.name }}" style="height: 400px; object-fit: cover;">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h5 style="color: white;"><strong>{{ hall.name }}</strong></h5>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#hallsCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#hallsCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <h2 class="display-6">Espacios para Cada Ocasión</h2>
+                    <p class="fs-5 text-muted">
+                        Descubre nuestros salones versátiles, perfectos para cualquier tipo de evento. Desde reuniones corporativas hasta celebraciones especiales, tenemos el espacio ideal para ti.
+                    </p>
+                    <p class="fs-4">¡Encuentra el lugar perfecto!</p>
+                </div>
+            </div>
+        } @else {
+            <div class="alert alert-info" role="alert">
+                No hay salones disponibles en este momento.
+            </div>
+        }
+    } @else {
+        <p>Cargando salones...</p>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4 border-top pt-4">
+        <h1>Eventos</h1>
+    </div>
+
+    @if (events$ | async; as events) {
+        @if (events.length > 0) {
+            <div class="row mb-5 align-items-center">
+                <div class="col-lg-7">
+                    <div id="eventCarousel" class="carousel slide shadow rounded overflow-hidden" data-bs-interval="5000" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            @for (event of events; track event.id) {
+                                <div class="carousel-item" [class.active]="$first">
+                                    <img [src]="event.imageUrl || 'https://via.placeholder.com/800x400'" class="d-block w-100" alt="{{ event.name }}" style="height: 400px; object-fit: cover;">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h5 style="color: white;"><strong>{{ event.name }}</strong></h5>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <h2 class="display-6">Vive Experiencias Únicas</h2>
+                    <p class="fs-5 text-muted">
+                        Explora nuestra selección de eventos exclusivos. Desde conciertos vibrantes hasta exposiciones culturales, tenemos algo para todos. ¡No te quedes fuera!
+                    </p>
+                    <p class="fs-4">¡Participa y disfruta!</p>
+                </div>
+            </div>
+        } @else {
+            <div class="alert alert-info" role="alert">
+                No hay eventos disponibles en este momento.
+            </div>
+        }
+    } @else {
+        <p>Cargando eventos...</p>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4 border-top pt-4">
+        <h1>Nuestras Habitaciones</h1>
+    </div>
+
+    @if (rooms$ | async; as rooms) {
+        @if (rooms.length > 0) {
+            <div class="row mb-5 align-items-center">
+                <div class="col-lg-7">
+                    <div id="roomsCarousel" class="carousel slide shadow rounded overflow-hidden" data-bs-interval="5000" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            @for (room of rooms; track room.id) {
+                                <div class="carousel-item" [class.active]="$first">
+                                    <img [src]="room.imageUrl || 'https://via.placeholder.com/800x400'" class="d-block w-100" alt="{{ room.name }}" style="height: 400px; object-fit: cover;">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h5 style="color: white;"><strong>{{ room.name }}</strong></h5>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#roomsCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#roomsCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <h2 class="display-6">Confort y Estilo</h2>
+                    <p class="fs-5 text-muted">
+                        Nuestras habitaciones están diseñadas para ofrecerte el máximo confort. Disfruta de una estancia relajante con todas las comodidades que necesitas.
+                    </p>
+                    <p class="fs-4">¡Reserva tu estancia ideal!</p>
+                </div>
+            </div>
+        } @else {
+            <div class="alert alert-info" role="alert">
+                No hay habitaciones disponibles en este momento.
+            </div>
+        }
+    } @else {
+        <p>Cargando habitaciones...</p>
+    }
+
+</div>

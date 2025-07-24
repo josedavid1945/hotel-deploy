@@ -1,0 +1,88 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><strong>Salones</strong></h1>
+  </div>
+
+  @if (halls$ | async; as halls) {
+  @if (halls.length > 0) {
+  <div class="row mb-5 align-items-center">
+      <div class="col-lg-7">
+          <div id="hallsCarousel" class="carousel slide shadow rounded overflow-hidden" data-bs-interval="5000" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @for (hall of halls; track hall.id ) {
+                        <div class="carousel-item " [class.active]="$first" >
+                            <img [src]="hall.imageUrl || 'https://via.placeholder.com/800x400'" class="d-block w-100"
+                                alt="{{ hall.name }}" style="height: 400px; object-fit: cover;">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 style="color: white;">
+                                    <strong>
+                                        {{ hall.name }}
+                                    </strong>
+                                </h5>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="sbutton" data-bs-target="#hallsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hiden"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#hallsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hiden"></span>
+                </button>
+            </div>
+
+      </div>
+      <div class="col-lg-5">
+            <h2 class="display-6">Vive Experiencias Únicas</h2>
+            <p class="fs-5 text-muted">
+                Explora nuestra selección de eventos salones privados. Desde conciertos vibrantes hasta exposiciones
+                culturales,
+                tenemos algo para todos. Navega por las imágenes para ver un adelanto y encuentra los detalles
+                de cada evento en la lista de abajo.
+            </p>
+            <p class="fs-4">¡No te quedes fuera!</p>
+      </div>
+  </div>
+  <h2 class="mb-4 border-top pt-4 fs-1 ">
+        <strong>Todos los salones</strong></h2>
+  <div class="row   ">
+    @for (hall of halls; track hall.id) {
+    <div class="d-flex list-group-item list-group-item-action flex-column align-items-start gy-3">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column ">
+          <h2 class="card-title mb-1">{{ hall.name }}</h2>
+          <img [src]="hall.imageUrl" class="card-img-top" alt="{{ hall.name }}"
+            style="height: 300px; width:1295px ; object-fit: cover;">
+          <p class="card-text mt-3">Equipamiento: {{ hall.equipment }}</p>
+          <ul class="list-unstyled mt-3 mb-4">
+            <li><strong>Capacidad:</strong> {{ hall.capacity }} personas</li>
+            <li><strong>Precio:</strong> ${{ hall.price }} / hallso</li>
+          </ul>
+
+          <div class="mt-auto">
+            @if (authService.isLoggedIn()) {
+            <div class="input-group">
+              <input type="date" class="form-control" #hallsDate>
+              <button class="btn btn-primary" (click)="reserveHall(hall, hallsDate)">Reservar</button>
+            </div>
+            } @else {
+            <a routerLink="/auth/login" class="btn btn-primary w-100">Iniciar Sesión para Reservar</a>
+            }
+          </div>
+
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  } @else {
+  <div class="alert alert-info" role="alert">
+    No hay salones disponibles en este momento.
+  </div>
+  }
+  } @else {
+  <p>Cargando salones...</p>
+  }
+</div>

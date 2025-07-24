@@ -1,0 +1,91 @@
+<div class="container mt-4">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4 ">
+    <h1><strong>Nuestras Habitaciones</strong></h1>
+  </div>
+
+  @if (rooms$ | async; as rooms) {
+    @if (rooms.length > 0) {
+      <div class="row mb-5 align-items-center">
+      <div class="col-lg-7">
+          <div id="roomsCarousel" class="carousel slide shadow rounded overflow-hidden" data-bs-interval="5000" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @for (room of rooms; track room.id ) {
+                        <div class="carousel-item " [class.active]="$first" >
+                            <img [src]="room.imageUrl || 'https://via.placeholder.com/800x400'" class="d-block w-100"
+                                alt="{{ room.name }}" style="height: 400px; object-fit: cover;">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 style="color: white;">
+                                    <strong>
+                                        {{ room.name }}
+                                    </strong>
+                                </h5>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="sbutton" data-bs-target="#roomsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hiden"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#roomsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hiden"></span>
+                </button>
+            </div>
+
+      </div>
+      <div class="col-lg-5">
+            <h2 class="display-6">Vive Experiencias Únicas</h2>
+            <p class="fs-5 text-muted">
+                Explora nuestra selección de habitaciones exclusivas. Desde conciertos vibrantes hasta exposiciones
+                culturales,
+                tenemos algo para todos. Navega por las imágenes para ver un adelanto y encuentra los detalles
+                de cada evento en la lista de abajo.
+            </p>
+            <p class="fs-4">¡No te quedes fuera!</p>
+      </div>
+  </div>
+
+  <h2 class="mb-4 x ">
+        <strong>Todas las habitaciones</strong></h2>
+    <div class="row  ">
+      @for (room of rooms; track room.id) {
+      <div class="d-flex list-group-item list-group-item-action flex-column align-items-start gy-3">
+        <div class="card h-100">
+
+          <img [src]="room.imageUrl || 'https://via.placeholder.com/400x250'" class="card-img-top"
+            alt="{{ room.name }}" style="height: 300px; width: 1295px; object-fit: cover;">
+
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ room.name }}</h5>
+            <p class="card-text mt-3">{{ room.description }}</p>
+            <ul class="list-unstyled mt-3 mb-4">
+              <li><strong>Capacidad:</strong> {{ room.guestcapacity }} persona(s)</li>
+              <li><strong>Precio:</strong> ${{ room.price }} / noche</li>
+              <li><strong>Disponibles:</strong> {{ room.quantity }}</li>
+            </ul>
+
+            <div class="mt-auto">
+              @if (authService.isLoggedIn()) {
+              <a [routerLink]="['/cliente/reservar-habitacion', room.id]" class="btn btn-primary w-100">Reservar Ahora</a>
+              } @else {
+              <a routerLink="/auth/login" class="btn btn-primary w-100">Iniciar Sesión para Reservar</a>
+              }
+            </div>
+
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="alert alert-info" role="alert">
+      No hay habitaciones disponibles en este momento.
+    </div>
+    }
+  } @else {
+  <p>Cargando habitaciones...</p>
+  }
+
+</div>

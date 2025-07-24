@@ -1,0 +1,58 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/">Hotel ULEAM</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/habitaciones">Habitaciones</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/salones">Salones</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/eventos">Eventos</a>
+        </li>
+
+        @if(authService.isAdmin()) {
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Gestionar
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" routerLink="/admin/habitaciones">Gestionar Habitaciones</a></li>
+            <li><a class="dropdown-item" routerLink="/admin/salones">Gestionar Salones</a></li>
+            <li><a class="dropdown-item" routerLink="/admin/eventos">Gestionar Eventos</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" routerLink="/admin/reservas">Ver Todas las Reservas</a></li>
+          </ul>
+        </li>
+        }
+      </ul>
+
+      <div class="d-flex align-items-center">
+        @if (authService.isLoggedIn()) {
+        <span class="navbar-text me-3">
+          Hola, {{ authService.currentUser()?.email }}
+        </span>
+
+        @if (!authService.isAdmin()) {
+        <a routerLink="/cliente/mis-reservas" class="btn btn-info me-2">Mis Reservas</a>
+        }
+
+        <button class="btn btn-outline-light" (click)="logout()">Logout</button>
+        } @else {
+        <a routerLink="/auth/login" class="btn btn-outline-light me-2">Login</a>
+        <a routerLink="/auth/registro" class="btn btn-light">Registro</a>
+        }
+      </div>
+    </div>
+  </div>
+</nav>

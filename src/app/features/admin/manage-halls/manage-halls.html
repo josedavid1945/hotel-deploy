@@ -1,0 +1,72 @@
+<div class="container mt-4">
+  <div class="row">
+
+    <div class="col-md-4">
+      <h3>{{ editingHallId ? 'Editar Salón' : 'Añadir Nuevo Salón' }}</h3>
+      <form [formGroup]="hallForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          <input type="text" formControlName="name" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Capacidad</label>
+          <input type="number" formControlName="capacity" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Precio por Evento</label>
+          <input type="number" formControlName="price" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Equipamiento</label>
+          <textarea formControlName="equipment" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="image" class="form-label">Imagen del Salón</label>
+          <input type="file" id="image" class="form-control" (change)="onFileSelected($event)">
+          @if(editingHallId && hallForm.value.imageUrl) {
+            <img [src]="hallForm.value.imageUrl" class="img-thumbnail mt-2" width="100">
+          }
+        </div>
+
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="hallForm.invalid">
+            {{ editingHallId ? 'Actualizar Salón' : 'Añadir Salón' }}
+          </button>
+          @if (editingHallId) {
+            <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
+          }
+        </div>
+      </form>
+    </div>
+
+    <div class="col-md-8">
+      <h3>Salones Existentes</h3>
+      @if (halls$ | async; as halls) {
+        @if (halls.length > 0) {
+          <ul class="list-group">
+            @for (hall of halls; track hall.id) {
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <img [src]="hall.imageUrl || 'https://via.placeholder.com/100x75'" alt="{{hall.name}}" class="img-thumbnail me-3" style="width: 100px;">
+                <div class="flex-grow-1">
+                  <h5>{{ hall.name }}</h5>
+                  <p class="mb-1">Equipamiento: {{ hall.equipment }}</p>
+                  <small>Capacidad: {{ hall.capacity }} - Precio: ${{ hall.price }}</small>
+                </div>
+                <div>
+                  <button class="btn btn-secondary btn-sm me-2" (click)="selectHallToEdit(hall)">Editar</button>
+                  <button class="btn btn-danger btn-sm" (click)="deleteHall(hall.id!)">Eliminar</button>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="text-muted">No hay salones registrados.</p>
+        }
+      } @else {
+        <p>Cargando salones...</p>
+      }
+    </div>
+    
+  </div>
+</div>

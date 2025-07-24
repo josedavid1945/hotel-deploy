@@ -1,0 +1,49 @@
+<div class="container mt-4">
+  <h1 class="mb-4">Mis Reservas</h1>
+
+  <h3 class="mt-5">Habitaciones</h3>
+  @if (roomReservations$ | async; as reservations) {
+    @if (reservations.length > 0) {
+      <div class="list-group">
+        @for (res of reservations; track res.id) {
+          <div class="list-group-item">
+            <h5 class="mb-1">{{ res.roomName }}</h5>
+            <p class="mb-1">
+              <strong>Check-in:</strong> {{ res.checkInDate | date: 'fullDate' }} | 
+              <strong>Check-out:</strong> {{ res.checkOutDate | date: 'fullDate' }}
+            </p>
+            <p class="mb-1">
+              <strong>Precio Total:</strong> ${{ res.totalPrice }}
+            </p>
+            <small>Fecha de reserva: {{ res.reservationDate |firestoreDate| date: 'medium' }}</small>
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="alert alert-info">Aún no has realizado ninguna reserva de habitación.</p>
+    }
+  } @else {
+    <p>Cargando tus reservas de habitaciones...</p>
+  }
+
+  <h3 class="mt-5">Eventos</h3>
+  @if (eventReservations$ | async; as reservations) {
+    @if (reservations.length > 0) {
+      <div class="list-group">
+        @for (res of reservations; track res.id) {
+          <div class="list-group-item">
+            <h5 class="mb-1">{{ res.eventName }}</h5>
+            <p class="mb-1">
+              Reservaste <strong>{{ res.tickets }}</strong> entrada(s) por un total de <strong>${{ res.totalPrice }}</strong>.
+            </p>
+            <small>Fecha de reserva: {{ res.reservationDate |firestoreDate | date: 'medium' }}</small>
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="alert alert-info">Aún no has realizado ninguna reserva para eventos.</p>
+    }
+  } @else {
+    <p>Cargando tus reservas de eventos...</p>
+  }
+</div>

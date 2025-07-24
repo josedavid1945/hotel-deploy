@@ -1,0 +1,103 @@
+<div class="container mt-4">
+    <h1 class="mb-4">
+        <strong>
+            Eventos
+        </strong>
+    </h1>
+
+    @if (events$ | async; as events) {
+    @if (events.length > 0) {
+
+    <div class="row mb-5 align-items-center">
+
+        <div class="col-lg-7">
+            <div id="eventCarousel" class="carousel slide shadow rounded overflow-hidden" data-bs-interval="5000" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @for (event of events; track event.id ) {
+                        <div class="carousel-item " [class.active]="$first" >
+                            <img [src]="event.imageUrl || 'https://via.placeholder.com/800x400'" class="d-block w-100"
+                                alt="{{ event.name }}" style="height: 400px; object-fit: cover;">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 style="color: white;">
+                                    <strong>
+                                        {{ event.name }}
+                                    </strong>
+                                </h5>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hiden"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hiden"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <h2 class="display-6">Vive Experiencias Únicas</h2>
+            <p class="fs-5 text-muted">
+                Explora nuestra selección de eventos exclusivos. Desde conciertos vibrantes hasta exposiciones
+                culturales,
+                tenemos algo para todos. Navega por las imágenes para ver un adelanto y encuentra los detalles
+                de cada evento en la lista de abajo.
+            </p>
+            <p class="fs-4">¡No te quedes fuera!</p>
+        </div>
+    </div>
+    
+    <h2 class="mb-4 border-top pt-4 fs-1 ">
+        <strong>Todos los Eventos</strong></h2>
+    <div class="row g-4">
+        @for (event of events; track event.id) {
+        <div class="col-12">
+            <div class="card overflow-hidden shadow-sm">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        <img [src]="event.imageUrl || 'https://via.placeholder.com/400x250'" alt="{{ event.name }}"
+                            class="img-fluid" style="object-fit: cover; height: 100%; width: 100%;">
+                    </div>
+                    <div class="col-md-7 d-flex flex-column">
+                        <div class="card-body">
+                            <h2 class="card-title fs-2">{{ event.name }}</h2>
+                            <p class="card-text"><small class="text-muted fs-5">Fecha: {{ event.date }}</small></p>
+                            <p class="card-text fs-5">{{ event.description }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">Capacidad: {{ event.capacity }} | Precio: ${{ event.price ||
+                                    'Gratis' }}</small>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 mt-auto pb-3">
+                            @if (authService.isLoggedIn()) {
+                            <div class="d-flex align-items-center">
+                                <select #ticketQty class="form-select form-select-sm me-2" style="width: 80px;">
+                                    @for (qty of ticketQuantities; track qty) {
+                                    <option [value]="qty">{{ qty }}</option>
+                                    }
+                                </select>
+                                <button class="btn btn-primary" (click)="reserveTickets(event, ticketQty)">
+                                    Reservar
+                                </button>
+                            </div>
+                            } @else {
+                            <a routerLink="/auth/login" class="btn btn-primary w-100">Iniciar Sesión para Reservar</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+    } @else {
+    <p class="alert alert-info">No hay eventos programados por el momento.</p>
+    }
+    } @else {
+    <p>Cargando eventos...</p>
+    }
+</div>

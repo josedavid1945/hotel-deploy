@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { MainLayoutComponent } from './shared/layout/main-layout/main-layout';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: true,
+  imports: [MainLayoutComponent], // Importamos nuestro layout principal
+  template: `<app-main-layout></app-main-layout>`, // Y lo mostramos
+  styles: [],
 })
-export class App {
-  protected title = 'hotel-app';
-}
+export class AppComponent {}

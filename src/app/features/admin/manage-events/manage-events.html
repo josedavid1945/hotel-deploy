@@ -1,0 +1,71 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-4">
+      <h3>{{ editingEventId ? 'Editar Evento' : 'Añadir Nuevo Evento' }}</h3>
+      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label class="form-label">Nombre del Evento</label>
+          <input type="text" formControlName="name" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Fecha</label>
+          <input type="date" formControlName="date" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Descripción</label>
+          <textarea formControlName="description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Precio (Opcional)</label>
+          <input type="number" formControlName="price" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Capacidad de Entradas</label>
+          <input type="number" formControlName="capacity" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="image" class="form-label">Imagen del Evento</label>
+          <input type="file" id="image" class="form-control" (change)="onFileSelected($event)">
+          @if(editingEventId && eventForm.value.imageUrl) {
+            <img [src]="eventForm.value.imageUrl" class="img-thumbnail mt-2" width="100">
+          }
+        </div>
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="eventForm.invalid">
+            {{ editingEventId ? 'Actualizar Evento' : 'Añadir Evento' }}
+          </button>
+          @if (editingEventId) {
+            <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
+          }
+        </div>
+      </form>
+    </div>
+    <div class="col-md-8">
+      <h3>Eventos Próximos</h3>
+      @if (events$ | async; as events) {
+        @if (events.length > 0) {
+          <ul class="list-group">
+            @for (event of events; track event.id) {
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <img [src]="event.imageUrl || 'https://via.placeholder.com/100x75'" alt="{{event.name}}" class="img-thumbnail me-3" style="width: 100px;">
+                <div class="flex-grow-1">
+                  <h5>{{ event.name }}</h5>
+                  <p class="mb-1">{{ event.description }}</p>
+                  <small>Fecha: {{ event.date }} | Capacidad: {{ event.capacity }} | Precio: ${{ event.price || 'Gratis' }}</small>
+                </div>
+                <div>
+                  <button class="btn btn-secondary btn-sm me-2" (click)="selectEventToEdit(event)">Editar</button>
+                  <button class="btn btn-danger btn-sm" (click)="deleteEvent(event.id!)">Eliminar</button>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="text-muted">No hay eventos registrados.</p>
+        }
+      } @else {
+        <p>Cargando eventos...</p>
+      }
+    </div>
+  </div>
+</div>

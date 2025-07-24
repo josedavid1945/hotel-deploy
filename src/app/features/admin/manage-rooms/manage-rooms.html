@@ -1,0 +1,72 @@
+<div class="container mt-4">
+  <div class="row">
+
+    <div class="col-md-4">
+      <h3>{{ editingRoomId ? 'Editar Habitación' : 'Añadir Nueva Habitación' }}</h3>
+      <form [formGroup]="roomForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Nombre</label>
+          <input type="text" id="name" formControlName="name" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="guestCapacity" class="form-label">Capacidad de Huéspedes</label>
+          <input type="number" id="guestCapacity" formControlName="guestCapacity" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="quantity" class="form-label">Cantidad de Habitaciones (Disponibilidad)</label>
+          <input type="number" id="quantity" formControlName="quantity" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="price" class="form-label">Precio por Noche</label>
+          <input type="number" id="price" formControlName="price" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Descripción</label>
+          <textarea id="description" formControlName="description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="image" class="form-label">Imagen de la Habitación</label>
+          <input type="file" id="image" class="form-control" (change)="onFileSelected($event)">
+          @if(editingRoomId && roomForm.value.imageUrl) {
+            <img [src]="roomForm.value.imageUrl" class="img-thumbnail mt-2" width="100">
+          }
+        </div>
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="roomForm.invalid">
+            {{ editingRoomId ? 'Actualizar Habitación' : 'Añadir Habitación' }}
+          </button>
+          @if (editingRoomId) {
+            <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
+          }
+        </div>
+      </form>
+    </div> <div class="col-md-8">
+      <h3>Habitaciones Existentes</h3>
+      @if (rooms$ | async; as rooms) {
+        @if (rooms.length > 0) {
+          <ul class="list-group">
+            @for (room of rooms; track room.id) {
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <img [src]="room.imageUrl || 'https://via.placeholder.com/100x75'" alt="{{room.name}}" class="img-thumbnail me-3" style="width: 100px;">
+                <div class="flex-grow-1">
+                  <h5>{{ room.name }}</h5>
+                  <p class="mb-1">{{ room.description }}</p>
+                  <small>Cap. Huéspedes: {{ room.guestcapacity }} | Disponibles: {{ room.quantity }} | Precio: ${{ room.price }}/noche</small>
+                </div>
+                <div>
+                  <button class="btn btn-secondary btn-sm me-2" (click)="selectRoomToEdit(room)">Editar</button>
+                  <button class="btn btn-danger btn-sm" (click)="deleteRoom(room.id!)">Eliminar</button>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="text-muted">No hay habitaciones registradas todavía.</p>
+        }
+      } @else {
+        <p>Cargando habitaciones...</p>
+      }
+    </div>
+    
+  </div>
+</div>
