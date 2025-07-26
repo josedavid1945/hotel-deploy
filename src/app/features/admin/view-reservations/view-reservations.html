@@ -9,7 +9,8 @@
           <thead>
             <tr>
               <th>Habitación</th>
-              <th>Usuario</th>
+              <th>Usuario email</th>
+              <th>Usuario id</th>
               <th>Check-in</th>
               <th>Check-out</th>
               <th>Total</th>
@@ -20,6 +21,7 @@
               <tr>
                 <td>{{ res.roomName }}</td>
                 <td>{{ res.userEmail }}</td>
+                <td>{{res.userId}}</td>
                 <td>{{ res.checkInDate | firestoreDate | date: 'longDate' }}</td>
                 <td>{{ res.checkOutDate | firestoreDate | date: 'longDate' }}</td>
                 <td>${{ res.totalPrice }}</td>
@@ -41,7 +43,8 @@
           <thead>
             <tr>
               <th>Evento</th>
-              <th>Usuario</th>
+              <th>Usuario email</th>
+              <th>Usuario id</th>
               <th>Entradas</th>
               <th>Total</th>
             </tr>
@@ -51,6 +54,7 @@
               <tr>
                 <td>{{ res.eventName }}</td>
                 <td>{{ res.userEmail }}</td>
+                <td>{{res.userId}}</td>
                 <td>{{ res.tickets }}</td>
                 <td>${{ res.totalPrice }}</td>
               </tr>
@@ -72,9 +76,9 @@
           <thead>
             <tr>
               <th>Evento</th>
-              <th>Usuario</th>
+              <th>Usuario email</th>
               <th>Id</th>
-              <th>Total</th>
+              <th>Fecha</th>
             </tr>
           </thead>
           <tbody>
@@ -82,9 +86,41 @@
               <tr>
                 <td>{{ res.hallName }}</td>
                 <td>{{ res.userEmail }}</td>
-                <td>{{ res.hallId }}</td>
+                <td>{{ res.userId }}</td>
                 <td>{{ res.eventDate| firestoreDate | date: 'longDate' }}</td>
               </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="alert alert-info">No hay reservas de eventos.</p>
+    }
+  }
+  <h3 class="mt-5">Usuarios</h3>
+  @if (allUsers$ | async; as users) {
+    @if (users.length > 0) {
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>email</th>
+              <th>Telefono</th>
+              <th>Id</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users; track user.id) {
+              @if (user.role == 'client') {
+                <tr>
+                  <td>{{ user.firstName }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.phone}}</td>
+                  <td>{{ user.id }}</td>
+                </tr>
+              }
+              
             }
           </tbody>
         </table>

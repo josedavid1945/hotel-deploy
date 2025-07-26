@@ -34,7 +34,7 @@
           <div class="list-group-item">
             <h5 class="mb-1">{{ res.eventName }}</h5>
             <p class="mb-1">
-              Reservaste <strong>{{ res.tickets }}</strong> entrada(s) por un total de <strong>${{ res.totalPrice }}</strong>.
+              Confirmacion de paga para <strong>{{ res.tickets }}</strong> entrada(s) por un total de <strong>${{ res.totalPrice }}</strong>.
             </p>
             <small>Fecha de reserva: {{ res.reservationDate |firestoreDate | date: 'medium' }}</small>
           </div>

@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// ESTA IMPORTACIÓN ES CRUCIAL
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth';
@@ -8,38 +7,44 @@ import { AuthService } from '@core/services/auth';
 @Component({
   selector: 'app-register',
   standalone: true,
-  // ASEGÚRATE DE QUE ReactiveFormsModule ESTÉ AQUÍ
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.html',
-  styleUrl: './register.css'
+  styleUrls: ['./register.css']
 })
-export class Register {
+export class RegisterComponent { // Se recomienda usar 'RegisterComponent' como nombre de clase
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // ESTA DEFINICIÓN ES NECESARIA PARA [formGroup]="registerForm"
+  // Formulario con todos los campos y validaciones
   registerForm: FormGroup = this.fb.group({
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
+    phone: ['', [Validators.required, Validators.pattern('^[0-9]{7,15}$')]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   async onSubmit() {
-  // ESTA LÍNEA ES NUESTRA PRUEBA
-  console.log('Botón presionado. Estado del formulario:', this.registerForm);
+    if (this.registerForm.invalid) {
+      alert('Por favor, completa todos los campos correctamente.');
+      return;
+    }
 
-  if (this.registerForm.invalid) {
-    console.log('El formulario es inválido, no se enviará.');
-    return;
-  }
+    try {
+      // Pasamos todos los datos del formulario al servicio de registro
+      await this.authService.register(this.registerForm.value);
+      
+      // Cerramos la sesión que Firebase crea automáticamente
+      await this.authService.logout();
+      
+      alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
+      this.router.navigate(['/auth/login']); 
+      
 
-  try {
-    console.log('El formulario es válido, intentando registrar...');
-    const { email, password } = this.registerForm.value;
-    await this.authService.register({ email, password });
-    this.router.navigate(['/auth/login']); 
-  } catch (error) {
-    console.error('Error en el registro:', error);
+    } catch (error) {
+      console.error('Error en el registro:', error);
+      alert('El correo electrónico ya está en uso o hubo otro error.');
+    }
   }
-}
 }

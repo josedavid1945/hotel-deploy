@@ -6,6 +6,8 @@ import { AuthService } from '@core/services/auth';
 import { RouterLink } from '@angular/router';
 import { Timestamp } from 'firebase/firestore'; // Importa Timestamp
 import { CloudinaryService } from '@core/services/cloudinary';
+import { User } from '@core/services/data';
+
 
 @Component({
   selector: 'app-events-view',
@@ -18,7 +20,7 @@ export class EventsView {
   private dataService = inject(DataService);
   authService = inject(AuthService);
   events$: Observable<HotelEvent[]> = this.dataService.getEvents();
-  
+  allUsers$: Observable<User[]>= this.dataService.getAllUsers();
   ticketQuantities = Array.from({length: 10}, (_, i) => i + 1);
 
   // --- NUEVO MÉTODO PARA MANEJAR LA RESERVA ---
@@ -49,9 +51,13 @@ export class EventsView {
       reservationDate: new Date()
     };
 
+    
+
+
     try {
       await this.dataService.addEventReservation(reservation);
-      alert(`¡Reserva exitosa para ${tickets} entrada(s) para ${event.name}!`);
+      alert(`¡Reserva por confirmar para ${tickets} entrada(s) para ${event.name}!, se lo contactara por ${currentUser.email
+      }`);
       // Aquí podríamos también actualizar la capacidad del evento, pero lo dejaremos para una mejora futura.
     } catch (error) {
       console.error("Error al crear la reserva:", error);

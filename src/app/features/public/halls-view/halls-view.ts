@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { DataService, Hall } from '@core/services/data';
 import { AuthService } from '@core/services/auth';
 import { Router } from '@angular/router';
+import { User } from '@core/services/data';
 
 @Component({
   selector: 'app-halls-view',
@@ -20,10 +21,11 @@ export class HallsView {
 
   halls$: Observable<Hall[]> = this.dataService.getHalls();
 
-
   async reserveHall(hall: Hall, dateInput: HTMLInputElement) {
     const eventDate = dateInput.value;
     const currentUser = this.authService.currentUser();
+    
+    
 
     if (!currentUser) { return; }
     if (!eventDate) {
@@ -42,7 +44,7 @@ export class HallsView {
 
     try {
       await this.dataService.addHallReservation(reservation);
-      alert(`Requerimento para  "${hall.name}" en la fecha ${eventDate} sera atendido por correo.`);
+      alert(`Requerimento para  "${hall.name}" en la fecha ${eventDate} sera atendido por correo ${currentUser.email}.`);
       this.router.navigate(['/cliente/mis-reservas']);
     } catch (error) {
       console.error("Error al reservar el salón:", error);

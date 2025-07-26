@@ -29,7 +29,7 @@ export class BookRoom implements OnInit, OnDestroy {
   totalPrice = signal(0);
   
   // Propiedades para la lógica de disponibilidad
-  private existingReservations: RoomReservation[] = [];
+  private reservacionesExistentes: RoomReservation[] = [];
   availabilityStatus: WritableSignal<'idle' | 'checking' | 'available' | 'unavailable'> = signal('idle');
   private formChangesSubscription?: Subscription;
 
@@ -54,14 +54,14 @@ export class BookRoom implements OnInit, OnDestroy {
 
       // 2. Obtener todas las reservas existentes para este tipo de habitación
       this.dataService.getReservationsForRoom(roomId).subscribe(reservations => {
-        this.existingReservations = reservations;
+        this.reservacionesExistentes = reservations;
         // Hacemos una verificación inicial por si el formulario ya tiene valores
-        this.calculatePriceAndCheckAvailability(this.reservationForm.value.checkInDate, this.reservationForm.value.checkOutDate);
+        this.revisarDisponibilidad(this.reservationForm.value.checkInDate, this.reservationForm.value.checkOutDate);
       });
 
       // 3. Escuchar cambios en las fechas para recalcular y verificar
       this.formChangesSubscription = this.reservationForm.valueChanges.subscribe(values => {
-        this.calculatePriceAndCheckAvailability(values.checkInDate, values.checkOutDate);
+        this.revisarDisponibilidad(values.checkInDate, values.checkOutDate);
       });
     }
   }
@@ -71,7 +71,7 @@ export class BookRoom implements OnInit, OnDestroy {
   }
 
   // Método combinado que calcula el precio Y verifica la disponibilidad
-  calculatePriceAndCheckAvailability(checkIn: string, checkOut: string) {
+  revisarDisponibilidad(checkIn: string, checkOut: string) {
     if (checkIn && checkOut) {
       const diffTime = new Date(checkOut).getTime() - new Date(checkIn).getTime();
       const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -88,7 +88,7 @@ export class BookRoom implements OnInit, OnDestroy {
         const roomData = this.room();
 
         // Contamos las reservas que se cruzan con las fechas seleccionadas
-        const overlappingReservationsCount = this.existingReservations.filter(res => {
+        const overlappingReservationsCount = this.reservacionesExistentes.filter(res => {
           const existingCheckIn = res.checkInDate;
           const existingCheckOut = res.checkOutDate;
           return newCheckIn < existingCheckOut && newCheckOut > existingCheckIn;

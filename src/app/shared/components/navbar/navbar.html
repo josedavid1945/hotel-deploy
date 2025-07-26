@@ -40,7 +40,7 @@
       <div class="d-flex align-items-center">
         @if (authService.isLoggedIn()) {
         <span class="navbar-text me-3">
-          Hola, {{ authService.currentUser()?.email }}
+           {{ authService.currentUser()?.email }}
         </span>
 
         @if (!authService.isAdmin()) {

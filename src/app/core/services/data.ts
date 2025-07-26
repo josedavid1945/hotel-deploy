@@ -4,20 +4,23 @@ import { Observable } from 'rxjs';
 import { NgZone } from '@angular/core';
 
 // Definimos una interfaz para el objeto Habitación para tener un código más limpio
+
 export interface Room {
-  id?: string; // El ID que le dará Firestore
+  id?: string;
   name: string;
-  guestcapacity: number;
+  guestCapacity: number; // Corregido: 'guestcapacity' a 'guestCapacity'
   price: number;
   description: string;
-  quantity: number;//ojooooo no implementado
+  quantity: number;
+  imageUrl?: string;
 }
 export interface Hall {
   id?: string;
   name: string;
   capacity: number;
   price: number;
-  equipment: string; // Ej: Proyector, Sonido, etc.
+  equipment: string;
+  imageUrl?: string;
 }
 export interface HotelEvent {
   id?: string;
@@ -25,7 +28,8 @@ export interface HotelEvent {
   date: string;
   description: string;
   price?: number;
-  capacity?: number; // <-- AÑADE ESTA PROPIEDAD
+  capacity?: number;
+  imageUrl?: string;
 }
 export interface EventReservation {
   id?: string;
@@ -48,7 +52,6 @@ export interface RoomReservation {
   totalPrice: number;
   reservationDate: Date;
 }
-
 export interface HallReservation {
   id?: string;
   hallId: string;
@@ -58,14 +61,13 @@ export interface HallReservation {
   eventDate: Date;
   reservationDate: Date;
 }
-export interface Room {
-  imageUrl?: string;
-}
-export interface Hall {
-  imageUrl?: string;
-  
-}export interface HotelEvent {
-  imageUrl?: string;
+  export interface User {
+  id?: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  role: 'client' | 'admin';
 }
 @Injectable({
   providedIn: 'root'
@@ -145,7 +147,10 @@ export class DataService {
     const roomDocRef = doc(this.firestore, `rooms/${roomId}`);
     return getDoc(roomDocRef);
   }
-
+  getUserById(userId: string){
+    const idDocRef = doc(this.firestore, `users/${userId}`);
+    return getDoc(idDocRef);
+  }
   // Añadir una nueva reserva de habitación
   addRoomReservation(reservation: Omit<RoomReservation, 'id'>) {
     const reservationsCollection = collection(this.firestore, 'roomReservations');
@@ -179,4 +184,9 @@ export class DataService {
   const reservationsCollection = collection(this.firestore, 'hallReservations');
   return addDoc(reservationsCollection, reservation);
 }
+  getAllUsers():Observable<User[]>{
+    const UserCollection = collection(this.firestore, 'users');
+    return collectionData(UserCollection, {idField:'id'}) as Observable<User[]>; 
+    }
+  
 }

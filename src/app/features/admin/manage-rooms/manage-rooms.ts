@@ -81,7 +81,7 @@ export class ManageRooms {
     this.editingRoomId = room.id!;
     this.roomForm.patchValue({ // Usamos patchValue por si imageUrl no existe
       name: room.name,
-      guestCapacity: room.guestcapacity,
+      guestCapacity: room.guestCapacity,
       price: room.price,
       description: room.description,
       quantity: room.quantity,

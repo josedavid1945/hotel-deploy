@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
-import { DataService, RoomReservation, EventReservation, HallReservation } from '@core/services/data';
+import { DataService, RoomReservation, EventReservation, HallReservation, User } from '@core/services/data';
 import { FirestoreDatePipe } from '@shared/pipes/firestore-date-pipe';
 
 @Component({
@@ -18,4 +18,5 @@ export class ViewReservations {
   allRoomReservations$: Observable<RoomReservation[]> = this.dataService.getAllRoomReservations();
   allEventReservations$: Observable<EventReservation[]> = this.dataService.getAllEventReservations();
   allHallReservations$: Observable<HallReservation[]>= this.dataService.getHallReservations();
+  allUsers$: Observable<User[]>= this.dataService.getAllUsers();
 }
