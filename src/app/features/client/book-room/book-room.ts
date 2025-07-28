@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy, inject, signal, WritableSignal } from '@angular/core';
+import { Component, OnDestroy, OnInit, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-// CORRECCIÓN: Asegúrate de que la ruta de importación sea la correcta
-import { DataService, Room, RoomReservation } from '@core/services/data';
+import { DataService, Room, RoomReservation } from '@core/services/data'; 
 import { AuthService } from '@core/services/auth';
 import { Subscription } from 'rxjs';
 
@@ -12,7 +11,7 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './book-room.html',
-  styleUrl: './book-room.css'
+  styleUrls: ['./book-room.css']
 })
 export class BookRoom implements OnInit, OnDestroy {
   // Inyección de dependencias
@@ -29,9 +28,12 @@ export class BookRoom implements OnInit, OnDestroy {
   totalPrice = signal(0);
   
   // Propiedades para la lógica de disponibilidad
-  private reservacionesExistentes: RoomReservation[] = [];
+  private existingReservations: RoomReservation[] = [];
   availabilityStatus: WritableSignal<'idle' | 'checking' | 'available' | 'unavailable'> = signal('idle');
   private formChangesSubscription?: Subscription;
+
+  // CORRECCIÓN: Propiedad para la fecha de hoy, para validar en el HTML
+  today = new Date().toISOString().split('T')[0];
 
   constructor() {
     this.reservationForm = this.fb.group({
@@ -54,14 +56,13 @@ export class BookRoom implements OnInit, OnDestroy {
 
       // 2. Obtener todas las reservas existentes para este tipo de habitación
       this.dataService.getReservationsForRoom(roomId).subscribe(reservations => {
-        this.reservacionesExistentes = reservations;
-        // Hacemos una verificación inicial por si el formulario ya tiene valores
-        this.revisarDisponibilidad(this.reservationForm.value.checkInDate, this.reservationForm.value.checkOutDate);
+        this.existingReservations = reservations;
+        this.checkAvailability();
       });
 
       // 3. Escuchar cambios en las fechas para recalcular y verificar
       this.formChangesSubscription = this.reservationForm.valueChanges.subscribe(values => {
-        this.revisarDisponibilidad(values.checkInDate, values.checkOutDate);
+        this.checkAvailability();
       });
     }
   }
@@ -71,46 +72,42 @@ export class BookRoom implements OnInit, OnDestroy {
   }
 
   // Método combinado que calcula el precio Y verifica la disponibilidad
-  revisarDisponibilidad(checkIn: string, checkOut: string) {
-    if (checkIn && checkOut) {
-      const diffTime = new Date(checkOut).getTime() - new Date(checkIn).getTime();
-      const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
-      if (nights > 0) {
-        this.numberOfNights.set(nights);
-        const roomPrice = this.room()?.price ?? 0;
-        this.totalPrice.set(nights * roomPrice);
+  checkAvailability() {
+    const { checkInDate, checkOutDate } = this.reservationForm.value;
+    const roomData = this.room();
 
-        // Inicia la verificación de disponibilidad
-        this.availabilityStatus.set('checking');
-        const newCheckIn = new Date(checkIn);
-        const newCheckOut = new Date(checkOut);
-        const roomData = this.room();
+    if (!checkInDate || !checkOutDate || new Date(checkOutDate) <= new Date(checkInDate) || !roomData) {
+      this.numberOfNights.set(0);
+      this.totalPrice.set(0);
+      this.availabilityStatus.set('idle');
+      return;
+    }
 
-        // Contamos las reservas que se cruzan con las fechas seleccionadas
-        const overlappingReservationsCount = this.reservacionesExistentes.filter(res => {
-          const existingCheckIn = res.checkInDate;
-          const existingCheckOut = res.checkOutDate;
-          return newCheckIn < existingCheckOut && newCheckOut > existingCheckIn;
-        }).length;
-        
-        // Comparamos con la cantidad total de habitaciones de este tipo
-        if (roomData && roomData.quantity > overlappingReservationsCount) {
-          this.availabilityStatus.set('available');
-        } else {
-          this.availabilityStatus.set('unavailable');
-        }
+    const diffTime = new Date(checkOutDate).getTime() - new Date(checkInDate).getTime();
+    const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    this.numberOfNights.set(nights);
+    const roomPrice = roomData.price ?? 0;
+    this.totalPrice.set(nights * roomPrice);
 
-      } else {
-        this.numberOfNights.set(0);
-        this.totalPrice.set(0);
-        this.availabilityStatus.set('idle');
-      }
+    this.availabilityStatus.set('checking');
+    const newCheckIn = new Date(checkInDate);
+    const newCheckOut = new Date(checkOutDate);
+
+    const overlappingReservationsCount = this.existingReservations.filter(res => {
+      const existingCheckIn = (res.checkInDate as any).toDate();
+      const existingCheckOut = (res.checkOutDate as any).toDate();
+      return newCheckIn < existingCheckOut && newCheckOut > existingCheckIn;
+    }).length;
+    
+    if (roomData.quantity > overlappingReservationsCount) {
+      this.availabilityStatus.set('available');
+    } else {
+      this.availabilityStatus.set('unavailable');
     }
   }
 
   async onSubmit() {
-    // Se añade la verificación de disponibilidad
     if (this.reservationForm.invalid || this.availabilityStatus() !== 'available') {
       alert("Por favor, selecciona un rango de fechas válido y disponible.");
       return;

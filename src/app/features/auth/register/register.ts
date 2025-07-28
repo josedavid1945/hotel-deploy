@@ -18,8 +18,8 @@ export class RegisterComponent { // Se recomienda usar 'RegisterComponent' como 
 
   // Formulario con todos los campos y validaciones
   registerForm: FormGroup = this.fb.group({
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
+    firstName: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ ]*$')]],
+    lastName: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúüÁÉÍÓÚÜ ]*$')]],
     phone: ['', [Validators.required, Validators.pattern('^[0-9]{7,15}$')]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
